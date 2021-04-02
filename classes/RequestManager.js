@@ -73,11 +73,11 @@ module.exports = class RequestManager {
    * @returns {Promise<{ data: any, status: number, cached: number }>} The request results.
    */
   async request(url, params) {
-    const key = params.key ?? this.rotate();
+    const key = params?.key ?? this.rotate();
     const { data, status, headers } = await axios.default.get(url, {
+      baseURL: 'https://api.hypixel.net',
       params, headers: {
-        'API-Key': key,
-        'User-Agent': '@googlesites/hypixel-api-v2'
+        'API-Key': key
       },
       validateStatus: () => true
     });
@@ -98,6 +98,8 @@ module.exports = class RequestManager {
       throw `${this.hideKey(key)}${data.cause ?? 'Unknown error'}`;
     }
 
-    return this.cache.set(key, { data, status, cached: Date.now() }).get(key);
+    this.cache.set(key, { data, status, cached: Date.now() });
+
+    return this.cache.get(key);
   }
 }

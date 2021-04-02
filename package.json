@@ -1,17 +1,20 @@
 {
   "name": "hypixel-api-v2",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose ./test"
   },
-  "author": "Matthew",
+  "author": "GoogleSites",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^14.14.37",
     "axios": "^0.21.1",
     "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "@types/node": "^14.14.37"
   },
   "repository": {
     "type": "git",
