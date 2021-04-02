@@ -422,7 +422,7 @@
 const RequestManager = require('./RequestManager');
 
 const USERNAME_REGEX = /^\w{1,16}$/;
-const UUID_REGEX = /^[a-z0-9]{8}[a-z0-9]{4}4[a-z0-9]{3}[a-z0-9]{12}$/;
+const UUID_REGEX = /^[a-z0-9]{8}[a-z0-9]{4}4[a-z0-9]{3}[a-z0-9]{4}[a-z0-9]{12}$/;
 const OBJECTID_REGEX = /^[a-z0-9]{24}$/;
 
 module.exports = class HypixelAPI {
@@ -443,7 +443,9 @@ module.exports = class HypixelAPI {
 		if (UUID_REGEX.test(uuid) === false)
 			throw 'Invalid UUID provided.';
 
-		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${uuid}`);
+		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${uuid}`, {
+			baseURL: null
+		});
 		
 		if (status !== 200 || data.status !== 'OK')
 			throw 'Invalid UUID provided.';
@@ -460,8 +462,10 @@ module.exports = class HypixelAPI {
 		if (USERNAME_REGEX.test(username) === false)
 			throw 'Invalid username provided.';
 
-		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${username}`);
-		
+		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${username}`, {
+			baseURL: null
+		});
+
 		if (status !== 200 || data.status !== 'OK')
 			throw 'Invalid username provided.';
 
@@ -474,10 +478,12 @@ module.exports = class HypixelAPI {
 	 * @returns {{ uuid: string, username: string }} A username and UUID.
 	 */
 	 async getUsernameAndUUID(query) {
-		if (UUID_REGEX.test(query) === false && USERNAME_REGEX.test(query))
+		if (UUID_REGEX.test(query) === false && USERNAME_REGEX.test(query) === false)
 			throw 'Invalid username or UUID provided.';
 
-		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${query}`);
+		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${query}`, {
+			baseURL: null
+		});
 		
 		if (status !== 200 || data.status !== 'OK')
 			throw 'Invalid username or UUID provided.';
@@ -560,7 +566,7 @@ module.exports = class HypixelAPI {
 
 		const { data } = await this.manager.request('/guild', { [type]: query });
 
-		return data.record;
+		return data.guild;
 	}
 
 	get resources() {
@@ -585,7 +591,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	async resources_achievements() {
-		const { data } = await this.manager.axios.get('/resources/achievements');
+		const { data } = await this.manager.request('/resources/achievements', { key: null });
 
 		return data.achievements;
 	}
@@ -596,7 +602,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	async resources_challenges() {
-		const { data } = await this.manager.axios.get('/resources/challenges');
+		const { data } = await this.manager.request('/resources/challenges', { key: null });
 
 		return data.challenges;
 	}
@@ -607,7 +613,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	async resources_quests() {
-		const { data } = await this.manager.axios.get('/resources/quests');
+		const { data } = await this.manager.request('/resources/quests', { key: null });
 
 		return data.quests;
 	}
@@ -618,7 +624,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	async resources_guilds_achievements() {
-		const { data } = await this.manager.axios.get('/resources/guilds/achievements');
+		const { data } = await this.manager.request('/resources/guilds/achievements', { key: null });
 
 		return {
 			one_time: data.one_time,
@@ -632,7 +638,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	 async resources_guilds_permissions() {
-		const { data } = await this.manager.axios.get('/resources/guilds/achievements');
+		const { data } = await this.manager.request('/resources/guilds/permissions', { key: null });
 
 		return data.permissions;
 	}
@@ -643,7 +649,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	async resources_skyblock_collections() {
-		const { data } = await this.manager.axios.get('/resources/skyblock/collections');
+		const { data } = await this.manager.request('/resources/skyblock/collections', { key: null });
 
 		return data.collections;
 	}
@@ -654,7 +660,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	async resources_skyblock_skills() {
-		const { data } = await this.manager.axios.get('/resources/skyblock/skills');
+		const { data } = await this.manager.request('/resources/skyblock/skills', { key: null });
 
 		// https://github.com/HypixelDev/PublicAPI/issues/417
 		return data.skills ?? data.collections;
@@ -726,7 +732,7 @@ module.exports = class HypixelAPI {
 	 * @private
 	 */
 	async skyblock_auctions_ended() {
-		const { data } = await this.manager.request('/skyblock/auctions_ended', { page });
+		const { data } = await this.manager.request('/skyblock/auctions_ended');
 
 		return {
 			lastUpdated: data.lastUpdated,

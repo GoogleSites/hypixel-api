@@ -18,22 +18,35 @@ module.exports = class RequestManager {
 		this.nextKey = -1;
 
 		this.axios = axios.create({
-			baseURL: 'https://api.hypixel.net',
 			validateStatus: () => true,
 			adapter: async config => {
-        if (config.force !== true) {
-          const response = await this.waiting.get(key);
+        const key = `${config.baseURL ?? ''}${config.url}${JSON.stringify(config.params ?? {})}`;
+        const active = await this.waiting.get(key);
 
-          if (response)
-            return response;
+        if (active) {
+          return active;
         }
 
-        this.waiting.set(key, () => this.request(`${config.baseURL ?? ''}${config.url}`, config.params));
+        if (config.force !== true) {
+          const cached = this.cache.get(key);
+
+          if (cached) {
+            return cached;
+          }
+        }
+
+        this.waiting.set(key, axios.default.get(`${config.baseURL ?? ''}${config.url}`, {
+          params: config.params,
+          headers: config.headers,
+          validateStatus: () => true
+        }));
 
         const response = await this.waiting.get(key);
-        delete this.waiting[key];
 
-        return { data: response.data, status: response.status, cached: false };
+        this.waiting.delete(key);
+        this.cache.set(key, { data: response.data, status: response.status, cached: Date.now() });
+
+        return this.cache.get(key);
       }
 		});
 
@@ -68,13 +81,14 @@ module.exports = class RequestManager {
   /**
    * Send a request to the Hypixel API.
    * @param {string} url The request URL.
-   * @param {{[key: string]: string}} params The query parameters.
+   * @param {{ [key: string]: string }} params The query parameters.
    * @param {string | boolean} automatic An API key to use.
    * @returns {Promise<{ data: any, status: number, cached: number }>} The request results.
    */
-  async request(url, params) {
-    const key = params?.key ?? this.rotate();
-    const { data, status, headers } = await axios.default.get(url, {
+  async request(url, params = {}) {
+    const key = params?.key === null ? undefined : this.rotate();
+
+    const response = await this.axios.get(url, {
       baseURL: 'https://api.hypixel.net',
       params, headers: {
         'API-Key': key
@@ -82,24 +96,22 @@ module.exports = class RequestManager {
       validateStatus: () => true
     });
 
-    if (status === 403) {
+    if (response.status === 403) {
       throw 'Invalid API key provided.';
     }
 
-    if (data.success === false) {
-      if (headers['retry-after'] && typeof params.key !== 'string') {
-        await Util.sleep(headers['retry-after'] * 1000 + 1000);
+    if (response.data.success === false) {
+      if (response.headers['retry-after'] && typeof params.key !== 'string') {
+        await Util.sleep(response.headers['retry-after'] * 1000 + 1000);
 
         params.key = key;
 
         return this.request(url, params);
       }
 
-      throw `${this.hideKey(key)}${data.cause ?? 'Unknown error'}`;
+      throw `${this.hideKey(key)}${response.data.cause ?? 'Unknown error'}`;
     }
 
-    this.cache.set(key, { data, status, cached: Date.now() });
-
-    return this.cache.get(key);
+    return response;
   }
 }
