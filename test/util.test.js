@@ -1,7 +1,9 @@
 const Util = require('../classes/Util');
 
-test('sleep for 0ms', async () => {
-	const result = await Util.sleep(0);
+test('sleep for 0ms', () => {
+	expect(Util.sleep(0)).resolves.toBe(true);
+});
 
-	expect(result).toBe(true);
+test('instantiate class', () => {
+	expect(() => new Util()).toThrow();
 });

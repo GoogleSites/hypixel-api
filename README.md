@@ -1,6 +1,7 @@
 # hypixel-api-v2
 
 [![npm version](https://badge.fury.io/js/hypixel-api-v2.svg)](https://www.npmjs.com/package/hypixel-api-v2)
+![coverage](./coverage/badge-functions.svg)
 
 ## Features
  * [TypeScript](https://www.typescriptlang.org/) support.

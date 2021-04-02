@@ -10,7 +10,7 @@ class RequestManager {
    * @param {string[] | string} keys The API key(s).
    * @param {number} cacheFor The number of milliseconds to cache results.
    */
-	constructor(keys, cacheFor = 300000) {
+	constructor(keys = [], cacheFor = 300000) {
 		this.cache = new Cache({ stdTTL: cacheFor, checkperiod: 120 });
     this.waiting = new Map();
 
@@ -51,11 +51,11 @@ class RequestManager {
 		});
 
     if (keys.length === 0)
-      throw new Error('No Hypixel API keys provided.');
+      throw 'No Hypixel API keys provided.';
 
     for (const key of this.keys) {
       if (KEY_REGEX.test(key) === false)
-        throw new Error(`Invalid API key provided: ${key}`);
+        throw `Invalid API key provided: ${key}`;
     }
 	}
 
@@ -92,8 +92,7 @@ class RequestManager {
       baseURL: 'https://api.hypixel.net',
       params, headers: {
         'API-Key': key
-      },
-      validateStatus: () => true
+      }
     });
 
     if (response.status === 403) {

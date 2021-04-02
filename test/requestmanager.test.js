@@ -19,3 +19,15 @@ test('send request', async () => {
 		cached: expect.any(Number)
 	}));
 });
+
+test('validate status function', () => {
+	expect(manager.axios.defaults.validateStatus()).toBe(true);
+});
+
+test('provide no keys', () => {
+	expect(() => new RequestManager()).toThrow();
+});
+
+test('provide invalid keys', () => {
+	expect(() => new RequestManager('abc')).toThrow();
+});

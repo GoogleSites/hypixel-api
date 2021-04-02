@@ -438,9 +438,10 @@ class HypixelAPI {
 	 * Retrieve a username from a UUID.
 	 * @param {string} uuid A player UUID.
 	 * @returns {string} The username attached to the UUID.
+	 * @throws {string} UUID must be valid.
 	 */
 	async getUsername(uuid) {
-		if (UUID_REGEX.test(uuid) === false)
+		if (typeof uuid !== 'string' || UUID_REGEX.test(uuid) === false)
 			throw 'Invalid UUID provided.';
 
 		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${uuid}`, {
@@ -457,9 +458,10 @@ class HypixelAPI {
 	 * Retrieve a UUID from a username.
 	 * @param {string} username A player username.
 	 * @returns {string} The UUID attached to the username.
+	 * @throws {string} Username must be valid.
 	 */
 	 async getUUID(username) {
-		if (USERNAME_REGEX.test(username) === false)
+		if (typeof username !== 'string' || USERNAME_REGEX.test(username) === false)
 			throw 'Invalid username provided.';
 
 		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${username}`, {
@@ -476,9 +478,10 @@ class HypixelAPI {
 	 * Retrieve a UUID and username from a UUID or username.
 	 * @param {string} username A player username or UUID.
 	 * @returns {{ uuid: string, username: string }} A username and UUID.
+	 * @throws {string} UUID or username must be valid.
 	 */
 	 async getUsernameAndUUID(query) {
-		if (UUID_REGEX.test(query) === false && USERNAME_REGEX.test(query) === false)
+		if (typeof query !== 'string' || UUID_REGEX.test(query) === false && USERNAME_REGEX.test(query) === false)
 			throw 'Invalid username or UUID provided.';
 
 		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${query}`, {
@@ -554,15 +557,19 @@ class HypixelAPI {
 	 * Retrieve information about a guild.
 	 * @param {string} query The guild id, guild name, or the uuid of a guild member.
 	 * @returns {Guild} The guild.
+	 * @throws {string} Guild UUID, member UUID, or name must be valid.
 	 */
-	async guild(query) {
-		const type = OBJECTID_REGEX.test(query) ? 'id'
-			: UUID_REGEX.test(query) ? 'player'
-			: query.length <= 32 ? 'name'
-			: null;
+	async guild(query, type = 'name') {
+		if (['name', 'player', 'id'].includes(type) === false)
+			throw 'Invalid type. [name, player, id]';
 
-		if (type === null)
-			throw 'Invalid guild id, guild name, or player UUID.';
+		const error = typeof query !== 'string' ? 'Query must be defined.'
+			: type === 'id' ? OBJECTID_REGEX.test(query) === false && 'Invalid guild identification key.'
+			: type === 'player' ? UUID_REGEX.test(query) === false && 'Invalid player UUID.'
+			: query.length > 32 && 'Invalid guild name.';
+
+		if (error)
+			throw error;
 
 		const { data } = await this.manager.request('/guild', { [type]: query });
 
@@ -694,6 +701,7 @@ class HypixelAPI {
 	 * @param {string} uuid The UUID.
 	 * @param {'uuid' | 'player' | 'profile'} type The type of UUID to query. 
 	 * @returns {Auction[]} A list of auctions.
+	 * @throws {string} Invalid type or UUID.
 	 * @private
 	 */
 	async skyblock_auction(uuid, type = 'player') {
