@@ -36,4 +36,4 @@ const hypixel = new HypixelAPI('your-key-here'); // or ['first-key-here', 'secon
 
 ## Documentation
 
-View the documentation [here](http://googlesites.github.io/hypixel-api-v2/index.html).
+View the documentation [here](https://googlesites.github.io/hypixel-api-v2/HypixelAPI.html).
