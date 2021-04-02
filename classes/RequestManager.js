@@ -5,10 +5,10 @@ const Util = require('./Util');
 
 const KEY_REGEX = /^[a-z0-9]{8}-[a-z0-9]{4}-4[a-z0-9]{3}-[a-z0-9]{4}-[a-z0-9]{12}$/;
 
-module.exports = class RequestManager {
+class RequestManager {
   /**
    * @param {string[] | string} keys The API key(s).
-   * @param {*} cacheFor The number of milliseconds to cache results.
+   * @param {number} cacheFor The number of milliseconds to cache results.
    */
 	constructor(keys, cacheFor = 300000) {
 		this.cache = new Cache({ stdTTL: cacheFor, checkperiod: 120 });
@@ -81,7 +81,7 @@ module.exports = class RequestManager {
   /**
    * Send a request to the Hypixel API.
    * @param {string} url The request URL.
-   * @param {{ [key: string]: string }} params The query parameters.
+   * @param {Object.<string, string>} params The query parameters.
    * @param {string | boolean} automatic An API key to use.
    * @returns {Promise<{ data: any, status: number, cached: number }>} The request results.
    */
@@ -115,3 +115,5 @@ module.exports = class RequestManager {
     return response;
   }
 }
+
+module.exports = RequestManager;

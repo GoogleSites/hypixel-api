@@ -38,7 +38,7 @@
  * @property {string} rank Guild rank.
  * @property {number} joined A UNIX timestamp of when the user joined the guild.
  * @property {number} questParticipation ????
- * @property {{ [key: string]: number }} expHistory Daily experience history.
+ * @property {Object.<string, number>} expHistory Daily experience history.
  */
 
 /**
@@ -62,14 +62,14 @@
  * @property {GuildMember[]} members A list of guild members.
  * @property {?number} legacyRanking ????
  * @property {number} exp Guild experience.
- * @property {{ [key: string]: number }} achievements A list of achievements.
+ * @property {Object.<string, number>} achievements A list of achievements.
  * @property {string} name_lower A lowercase version of the guild name.
  * @property {GuildRank[]} ranks A list of guild ranks.
  * @property {string} description The guild's description.
  * @property {string[]} preferredGames A list of preferred games.
  * @property {string} tagColor The tag colour in the tablist.
  * @property {string} tag The tag.
- * @property {{ [key: string]: number }} guildExpByGameType The guild experience received from each game.
+ * @property {Object.<string, number>} guildExpByGameType The guild experience received from each game.
  */
 
 /**
@@ -87,14 +87,14 @@
  * @type {Object}
  * @property {string} name The name of the achievement.
  * @property {string} description The description of the achievement.
- * @property {{ tier: number, points: number, amount: number }[]} tiers The achievement tiers.
+ * @property {Array.<{ tier: number, points:  number, amount: number }>} tiers The achievement tiers.
  */
 
 /**
  * @typedef Achievement
  * @type {Object}
- * @property {{ [key: string]: OneTimeAchievement }} one_time One-time achievements.
- * @property {{ [key: string]: TieredAchievement }} tiered Tiered achievements.
+ * @property {Object.<string, OneTimeAchievement>} one_time One-time achievements.
+ * @property {Object.<string, TieredAchievement>} tiered Tiered achievements.
  * @property {number} total_points Total points gained from completing all achievements.
  * @property {number} total_legacy_points Total legacy points gained from completing all achievements.
  */
@@ -104,7 +104,7 @@
  * @type {Object}
  * @property {string} id The challenge identification key.
  * @property {string} name The name of the challenge.
- * @property {{ type: string, amount: number }[]} rewards A list of challenge awards.
+ * @property {Array.<{ type: string, amount: number }>} rewards A list of challenge awards.
  */
 
 /**
@@ -113,9 +113,9 @@
  * @property {string} id The quest identification key.
  * @property {string} name The name of the quest.
  * @property {string} description The description of the quest.
- * @property {{ type: string, amount: number }[]} rewards The rewards given after completing the quest.
- * @property {{ id: string, type: string, integer: number }[]} objectives The quest objectives.
- * @property {{ type: string }[]} requirements The quest requirements.
+ * @property {Array.<{ type: string, amount: number }>} rewards The rewards given after completing the quest.
+ * @property {Array.<{ id: string, type: string, integer: number }>} objectives The quest objectives.
+ * @property {Array.<{ type: string }>} requirements The quest requirements.
  */
 
 /**
@@ -309,9 +309,9 @@
  * @property {number} first_join The first time that the player joined.
  * @property {number} first_join_hub ????
  * @property {any} stats
- * @property {{ [key: string]: SkyblockObjective }} objectives A list of active or completed objectives.
+ * @property {Object.<string, SkyblockObjective>} objectives A list of active or completed objectives.
  * @property {string[]} tutorial The components of the tutorial that have been completed.
- * @property {{ [key: string]: SkyblockQuest }} quests A list of active or completed quests.
+ * @property {Object.<string, SkyblockQuest>} quests A list of active or completed quests.
  * @property {number} coin_purse The amount of money in the player's purse.
  * @property {number} last_death A UNIX timestamp representing the time of their last death.
  * @property {string[]} visited_zones A list of visited zones.
@@ -342,7 +342,7 @@
  * @property {number} experience_skill_carpentry Experience gained in the carpentry skill.
  * @property {string[]} unlocked_coll_tiers A list of all unlocked collection tiers.
  * @property {number} wardrobe_equipped_slot The selected wardrobe slot.
- * @property {{ [key: string]: number }} collection A list of item counts for collections.
+ * @property {Object.<string, number>} collection A list of item counts for collections.
  * @property {any} sacks_counts
  */
 
@@ -371,7 +371,7 @@
  * @typedef SkyblockProfile
  * @type {Object}
  * @property {string} profile_id The profile UUID.
- * @property {{ [key: string]: SkyblockMember }} members A list of island members.
+ * @property {Object.<string, SkyblockMember>} members A list of island members.
  * @property {string} cute_name The name of the Skyblock realm.
  * @property {{ balance: number, transactions: SkyblockBankTransaction[] }} transactions A list of bank transactions.
  * @property {SkyblockCommunityUpgrade[]} community_upgrades A list of community upgrades.
@@ -395,7 +395,7 @@
  * @typedef GameCount
  * @type {Object}
  * @property {number} players The number of players playing the game.
- * @property {{ [key: string]: number }} modes The number of players in each sub-genre of the game mode.
+ * @property {Object.<string, number> } modes The number of players in each sub-genre of the game mode.
  */
 
 /**
@@ -425,10 +425,10 @@ const USERNAME_REGEX = /^\w{1,16}$/;
 const UUID_REGEX = /^[a-z0-9]{8}[a-z0-9]{4}4[a-z0-9]{3}[a-z0-9]{4}[a-z0-9]{12}$/;
 const OBJECTID_REGEX = /^[a-z0-9]{24}$/;
 
-module.exports = class HypixelAPI {
+class HypixelAPI {
 	/**
    * @param {string[] | string} keys The API key(s).
-   * @param {*} cacheFor The number of milliseconds to cache results.
+   * @param {number} cacheFor The number of milliseconds to cache results.
    */
 	constructor(keys, cacheFor = 300000) {
 		this.manager = new RequestManager(keys, cacheFor);
@@ -587,7 +587,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible achievements.
-	 * @returns { [key: string]: Achievement } A list of all possible achievements.
+	 * @returns {Object.<string, Achievement>} A list of all possible achievements.
 	 * @private
 	 */
 	async resources_achievements() {
@@ -598,7 +598,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible challenges.
-	 * @returns { [key: string]: Challenge[] } A list of all possible challenges.
+	 * @returns { Object.<string, Challenge[]> } A list of all possible challenges.
 	 * @private
 	 */
 	async resources_challenges() {
@@ -609,7 +609,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible quests.
-	 * @returns { [key: string]: Quest[] } A list of all possible quests.
+	 * @returns { Object.<string, Quest[]> } A list of all possible quests.
 	 * @private
 	 */
 	async resources_quests() {
@@ -620,7 +620,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible guild achievements.
-	 * @returns { one_time: OneTimeAchievement[], tiered: TieredAchievement[] } A list of all possible guild achievements.
+	 * @returns {{ one_time: OneTimeAchievement[], tiered: TieredAchievement[] }} A list of all possible guild achievements.
 	 * @private
 	 */
 	async resources_guilds_achievements() {
@@ -634,7 +634,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible guild permissions.
-	 * @returns {{ en_us: GuildPermission }[]} A list of all possible guild permissions.
+	 * @returns {Array.<{ en_us: GuildPermission }>} A list of all possible guild permissions.
 	 * @private
 	 */
 	 async resources_guilds_permissions() {
@@ -645,7 +645,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieves a list of all Skyblock collections.
-	 * @returns {{ [key: string]: { name: string, items: { [key: string]: SkyblockCollection } } }} A list of all Skyblock collections.
+	 * @returns { Object.<string, { name: string, items: Object.<string, SkyblockCollection> }> } A list of all Skyblock collections.
 	 * @private
 	 */
 	async resources_skyblock_collections() {
@@ -656,7 +656,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieves a list of all Skyblock skills.
-	 * @returns {{ [key: string]: SkyblockSkill }} A list of all Skyblock skills.
+	 * @returns {Object.<string, SkyblockSkill>} A list of all Skyblock skills.
 	 * @private
 	 */
 	async resources_skyblock_skills() {
@@ -742,7 +742,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieves a list of all items listed on the bazaar.
-	 * @returns {{ [key: string]: SkyblockBazaar }} A list of all items listed on the bazaar.
+	 * @returns {Object.<string, SkyblockBazaar>} A list of all items listed on the bazaar.
 	 * @private
 	 */
 	async skyblock_bazaar() {
@@ -788,7 +788,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieves a list of player count information.
-	 * @returns {{ playerCount: number, games: { [key: string], GameCount } }} A list of playercounts per game, along with the total player count.
+	 * @returns {{ playerCount: number, games: Object.<string, GameCount> }} A list of playercounts per game, along with the total player count.
 	 */
 	async counts() {
 		const { data } = await this.manager.request('/counts');
@@ -801,7 +801,7 @@ module.exports = class HypixelAPI {
 
 	/**
 	 * Retrieves all leaderboards.
-	 * @returns {{ [key: string]: Leaderboard[] }} A list of all leaderboards.
+	 * @returns { Object.<string, Leaderboard[]> } A list of all leaderboards.
 	 */
 	async leaderboards() {
 		const { data } = await this.manager.request('/leaderboards');
@@ -825,3 +825,5 @@ module.exports = class HypixelAPI {
 		};
 	}
 }
+
+module.exports = HypixelAPI;

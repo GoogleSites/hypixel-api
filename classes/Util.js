@@ -1,4 +1,4 @@
-module.exports = class Util {
+class Util {
 	constructor() {
 
 	}
@@ -7,3 +7,5 @@ module.exports = class Util {
 		return new Promise(r => setTimeout(r, ms, true));
 	}
 }
+
+module.exports = Util;
