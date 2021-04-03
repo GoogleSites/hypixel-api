@@ -69,6 +69,7 @@
  * @property {string[]} preferredGames A list of preferred games.
  * @property {string} tagColor The tag colour in the tablist.
  * @property {string} tag The tag.
+ * @property {boolean} publiclyListed Whether the guild is listed publicly.
  * @property {Object.<string, number>} guildExpByGameType The guild experience received from each game.
  */
 
@@ -437,7 +438,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve a username from a UUID.
 	 * @param {string} uuid A player UUID.
-	 * @returns {string} The username attached to the UUID.
+	 * @returns {Promise<string>} The username attached to the UUID.
 	 * @throws {string} UUID must be valid.
 	 */
 	async getUsername(uuid) {
@@ -457,7 +458,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve a UUID from a username.
 	 * @param {string} username A player username.
-	 * @returns {string} The UUID attached to the username.
+	 * @returns {Promise<string>} The UUID attached to the username.
 	 * @throws {string} Username must be valid.
 	 */
 	 async getUUID(username) {
@@ -477,7 +478,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve a UUID and username from a UUID or username.
 	 * @param {string} username A player username or UUID.
-	 * @returns {{ uuid: string, username: string }} A username and UUID.
+	 * @returns {Promise<{ uuid: string, username: string }>} A username and UUID.
 	 * @throws {string} UUID or username must be valid.
 	 */
 	 async getUsernameAndUUID(query) {
@@ -497,7 +498,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve information about an API key.
 	 * @param {string} key A Hypixel API key.
-	 * @returns {{ key: string, owner: string, limit: number, queriesInPastMin: number, totalQueries: number }} API key information.
+	 * @returns {Promise<{ key: string, owner: string, limit: number, queriesInPastMin: number, totalQueries: number }>} API key information.
 	 */
 	async key(key) {
 		const { data } = await this.manager.request('/key', { key });
@@ -508,7 +509,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve a player's statistics.
 	 * @param {string} query A username or UUID.
-	 * @returns {Player} A player.
+	 * @returns {Promise<Player>} A player.
 	 */
 	async player(query) {
 		const { uuid } = await this.getUsernameAndUUID(query);
@@ -520,7 +521,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve a player's friends list.
 	 * @param {string} query A username or UUID.
-	 * @returns {FriendEntry[]} The friend list.
+	 * @returns {Promise<FriendEntry[]>} The friend list.
 	 */
 	async friends(query) {
 		const { uuid } = await this.getUsernameAndUUID(query);
@@ -532,7 +533,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve a player's recent games.
 	 * @param {string} query A username or UUID.
-	 * @returns {GameEntry[]} The friend list.
+	 * @returns {Promise<GameEntry[]>} Up to 100 recent games played.
 	 */
 	 async recentGames(query) {
 		const { uuid } = await this.getUsernameAndUUID(query);
@@ -544,7 +545,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve information about a player's session.
 	 * @param {string} query A username or UUID.
-	 * @returns {{ online: true, gameType: string, mode: string, map: string } | { online: false }} The session information.
+	 * @returns {Promise<{ online: true, gameType: string, mode: string, map: string } | { online: false }>} The session information.
 	 */
 	async status(query) {
 		const { uuid } = await this.getUsernameAndUUID(query);
@@ -556,7 +557,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve information about a guild.
 	 * @param {string} query The guild id, guild name, or the uuid of a guild member.
-	 * @returns {Guild} The guild.
+	 * @returns {Promise<Guild>} The guild.
 	 * @throws {string} Guild UUID, member UUID, or name must be valid.
 	 */
 	async guild(query, type = 'name') {
@@ -594,7 +595,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible achievements.
-	 * @returns {Object.<string, Achievement>} A list of all possible achievements.
+	 * @returns {Promise<Object.<string, Achievement>>} A list of all possible achievements.
 	 * @private
 	 */
 	async resources_achievements() {
@@ -605,7 +606,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible challenges.
-	 * @returns { Object.<string, Challenge[]> } A list of all possible challenges.
+	 * @returns {Promise<Object.<string, Challenge[]>>} A list of all possible challenges.
 	 * @private
 	 */
 	async resources_challenges() {
@@ -616,7 +617,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible quests.
-	 * @returns { Object.<string, Quest[]> } A list of all possible quests.
+	 * @returns {Promise<Object.<string, Quest[]>>} A list of all possible quests.
 	 * @private
 	 */
 	async resources_quests() {
@@ -627,7 +628,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible guild achievements.
-	 * @returns {{ one_time: OneTimeAchievement[], tiered: TieredAchievement[] }} A list of all possible guild achievements.
+	 * @returns {Promise<{ one_time: OneTimeAchievement[], tiered: TieredAchievement[] }>} A list of all possible guild achievements.
 	 * @private
 	 */
 	async resources_guilds_achievements() {
@@ -641,7 +642,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieve a list of all possible guild permissions.
-	 * @returns {Array.<{ en_us: GuildPermission }>} A list of all possible guild permissions.
+	 * @returns {Promise<Array.<{ en_us: GuildPermission }>>} A list of all possible guild permissions.
 	 * @private
 	 */
 	 async resources_guilds_permissions() {
@@ -652,7 +653,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves a list of all Skyblock collections.
-	 * @returns { Object.<string, { name: string, items: Object.<string, SkyblockCollection> }> } A list of all Skyblock collections.
+	 * @returns {Promise<Object.<string, { name: string, items: Object.<string, SkyblockCollection> }>>} A list of all Skyblock collections.
 	 * @private
 	 */
 	async resources_skyblock_collections() {
@@ -663,7 +664,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves a list of all Skyblock skills.
-	 * @returns {Object.<string, SkyblockSkill>} A list of all Skyblock skills.
+	 * @returns {Promise<Object.<string, SkyblockSkill>>} A list of all Skyblock skills.
 	 * @private
 	 */
 	async resources_skyblock_skills() {
@@ -687,7 +688,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves a list of Skyblock news.
-	 * @returns {SkyblockNews[]} A list of Skyblock news.
+	 * @returns {Promise<SkyblockNews[]>} A list of Skyblock news.
 	 * @private
 	 */
 	async skyblock_news() {
@@ -700,7 +701,7 @@ class HypixelAPI {
 	 * Retrieves a list of auctions by player UUID, auction UUID, or profile UUID.
 	 * @param {string} uuid The UUID.
 	 * @param {'uuid' | 'player' | 'profile'} type The type of UUID to query. 
-	 * @returns {Auction[]} A list of auctions.
+	 * @returns {Promise<Auction[]>} A list of auctions.
 	 * @throws {string} Invalid type or UUID.
 	 * @private
 	 */
@@ -719,7 +720,7 @@ class HypixelAPI {
 	/**
 	 * Retrieves a list of auctions and global auction statistics.
 	 * @param {number} page The auction page number.
-	 * @returns {{ page: number, totalPages: number, totalAuctions: number, lastUpdated: number, auctions: Auction[] }} A list of auctions and global auction statistics.
+	 * @returns {Promise<{ page: number, totalPages: number, totalAuctions: number, lastUpdated: number, auctions: Auction[] }>} A list of auctions and global auction statistics.
 	 * @private
 	 */
 	async skyblock_auctions(page = 0) {
@@ -736,7 +737,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves a list of auctions that have ended.
-	 * @returns {{ lastUpdated: number, auctions: EndedAuction[] }} A list of auctions that have ended.
+	 * @returns {Promise<{ lastUpdated: number, auctions: EndedAuction[] }>} A list of auctions that have ended.
 	 * @private
 	 */
 	async skyblock_auctions_ended() {
@@ -750,7 +751,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves a list of all items listed on the bazaar.
-	 * @returns {Object.<string, SkyblockBazaar>} A list of all items listed on the bazaar.
+	 * @returns {Promise<Object.<string, SkyblockBazaar>>} A list of all items listed on the bazaar.
 	 * @private
 	 */
 	async skyblock_bazaar() {
@@ -762,7 +763,7 @@ class HypixelAPI {
 	/**
 	 * Retrieves a Skyblock profile.
 	 * @param {string} query A profile UUId.
-	 * @returns {SkyblockProfile} A Skyblock profile.
+	 * @returns {Promise<SkyblockProfile>} A Skyblock profile.
 	 * @private
 	 */
 	async skyblock_profile(profile) {
@@ -774,7 +775,7 @@ class HypixelAPI {
 	/**
 	 * Retrieves a list of profiles attached to a user.
 	 * @param {string} query A UUID or username.
-	 * @returns {SkyblockProfile[]} A list of profiles attached to the player.
+	 * @returns {Promise<SkyblockProfile[]>} A list of profiles attached to the player.
 	 * @private
 	 */
 	async skyblock_profiles(query) {
@@ -786,7 +787,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves a list of active boosters.
-	 * @returns {Booster[]} A list of active boosters.
+	 * @returns {Promise<Booster[]>} A list of active boosters.
 	 */
 	async boosters() {
 		const { data } = await this.manager.request('/boosters');
@@ -796,7 +797,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves a list of player count information.
-	 * @returns {{ playerCount: number, games: Object.<string, GameCount> }} A list of playercounts per game, along with the total player count.
+	 * @returns {Promise<{ playerCount: number, games: Object.<string, GameCount> }>} A list of playercounts per game, along with the total player count.
 	 */
 	async counts() {
 		const { data } = await this.manager.request('/counts');
@@ -809,7 +810,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves all leaderboards.
-	 * @returns { Object.<string, Leaderboard[]> } A list of all leaderboards.
+	 * @returns {Promise<Object.<string, Leaderboard[]>>} A list of all leaderboards.
 	 */
 	async leaderboards() {
 		const { data } = await this.manager.request('/leaderboards');
@@ -819,7 +820,7 @@ class HypixelAPI {
 
 	/**
 	 * Retrieves current punishment statistics.
-	 * @returns {Punishments} Current punishment statistics.
+	 * @returns {Promise<Punishments>} Current punishment statistics.
 	 */
 	async punishmentStats() {
 		const { data } = await this.manager.request('/punishmentstats');

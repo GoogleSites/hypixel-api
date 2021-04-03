@@ -1,6 +1,6 @@
 const HypixelAPI = require('../classes/HypixelAPI');
 
-const hypixel = new HypixelAPI('your-api-key-here');
+const hypixel = new HypixelAPI('59aa468d-17d2-4b34-a865-7f1e0795e02e');
 
 test('get username', async () => {
 	const username = await hypixel.getUsername('f7c77d999f154a66a87dc4a51ef30d19');
@@ -185,4 +185,6 @@ test('get punishment statistics', async () => {
 		watchdog_rollingDaily: expect.any(Number),
 		staff_total: expect.any(Number)
 	}));
+
+	expect(1).toBe(1);
 });
