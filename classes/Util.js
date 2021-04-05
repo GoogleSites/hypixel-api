@@ -1,8 +1,4 @@
 const nbt = require('prismarine-nbt');
-const { promisify } = require('util');
-const zlib = require('zlib');
-
-const gunzip = promisify(zlib.gunzip);
 
 /**
  * @typedef HypixelBinaryData
@@ -34,14 +30,7 @@ class Util {
 		if (type !== 0)
 			throw `Unknown data type: ${type}`;
 
-		try {
-			const decompressed = await gunzip(Buffer.from(data, 'base64'));
-			const { parsed } = await nbt.parse(decompressed);
-
-			return parsed;
-		} catch {
-			throw 'Invalid data.';
-		}
+		return (await nbt.parseAs(Buffer.from(data, 'base64'), 'big')).data;
 	}
 }
 

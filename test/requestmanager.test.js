@@ -1,6 +1,6 @@
 const RequestManager = require('../classes/RequestManager');
 
-const manager = new RequestManager('4ccbc899-71c7-4554-994d-05638279e4a7');
+const manager = new RequestManager('your-api-key-here');
 
 test('hiding key', () => {
 	expect(manager.hideKey('2931ba88-3ccd-4504-9d53-94021c723e06')).toMatch(/^\*{8}-\*{4}-\*{4}-\*{4}-[a-z0-9]{12}$/);
@@ -44,6 +44,17 @@ test('the same request multiple times', async () => {
 	const second = await manager.request('/guild', { name: 'The Sloths' });
 
 	expect((await first).headers).toMatchObject(second.headers);
+});
+
+test('the same profile multiple times', async () => {
+	const first = await manager.request('/player', { name: 'hypixel' });
+	const second = await manager.request('/player', { name: 'hypixel' });
+
+	expect(first.cached).toEqual(second.cached);
+});
+
+test('test without using a key', () => {
+	expect(manager.request('/player')).rejects.toEqual(expect.any(String));
 });
 
 test('response cache', async () => {

@@ -8,7 +8,7 @@ test('instantiate class', () => {
 	expect(() => new Util()).toThrow();
 });
 
-test('decompress to nbt', async () => {
+test('decompress to nbt', () => {
 	expect(Util.decompressToNBT({
 		data: 'H4sIAAAAAAAAAONiYOBkYMzkYmBgYGEAAQCp5xppEQAAAA==',
 		type: 0
@@ -21,10 +21,5 @@ test('decompress to nbt', async () => {
 	expect(Util.decompressToNBT({
 		data: 'H4sIAAAAAAAAAONiYOBkYMzkYmBgYGEAAQCp5xppEQAAAA==',
 		type: 1
-	})).rejects.toEqual(expect.any(String));
-
-	expect(Util.decompressToNBT({
-		data: null,
-		type: 0
-	})).rejects.toEqual(expect.any(String));
+	})).rejects.toBeDefined();
 });

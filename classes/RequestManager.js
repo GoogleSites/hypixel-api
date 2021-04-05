@@ -43,11 +43,14 @@ class RequestManager {
         }
 
         const response = await this.waiting.get(key);
+        const set = { data: response.data, headers: response.headers, status: response.status, cached: Date.now() };
 
         this.waiting.delete(key);
-        this.cache.set(key, { data: response.data, headers: response.headers, status: response.status, cached: Date.now() });
 
-        return response;
+        if (axios.defaults.validateStatus(response.status))
+          this.cache.set(key, set);
+
+        return set;
       }
 		});
 
@@ -117,15 +120,15 @@ class RequestManager {
     }
 
     if (response.data.success === false) {
-      if (response.headers['retry-after'] && skipCache === false) {
-        await Util.sleep(response.headers['retry-after'] * 1000 + 1000);
+      if (response.headers['retry-after'] || response.status === 429) {
+        await Util.sleep((response.headers['retry-after'] ?? 60) * 1000 + 1000);
 
         params.key = key;
 
         return this.request(url, params);
       }
 
-      throw `${this.hideKey(key)}: ${response.data.cause ?? 'Unknown error'}`;
+      throw `${this.hideKey(key)}: ${response.data.cause}`;
     }
 
     return response;
