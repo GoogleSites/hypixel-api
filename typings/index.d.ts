@@ -1,4 +1,4 @@
-declare module 'hypixel-api-2' {
+declare module 'hypixel-api-v2' {
 	export const version: string;
 
 	export class HypixelAPI {
