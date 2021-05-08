@@ -1,3 +1,5 @@
+/** @module hypixel-api-v2 */
+
 /**
  * @typedef Player
  * @type {Object}
@@ -445,11 +447,11 @@ class HypixelAPI {
 		if (typeof uuid !== 'string' || UUID_REGEX.test(uuid) === false)
 			throw 'Invalid UUID provided.';
 
-		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${uuid}`, {
+		const { data, status } = await this.manager.axios.get(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`, {
 			baseURL: null
 		});
 		
-		if (status !== 200 || data.status !== 'OK')
+		if (status !== 200)
 			throw 'Invalid UUID provided.';
 
 		return data.name;
@@ -465,11 +467,11 @@ class HypixelAPI {
 		if (typeof username !== 'string' || USERNAME_REGEX.test(username) === false)
 			throw 'Invalid username provided.';
 
-		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${username}`, {
+		const { data, status } = await this.manager.axios.get(`https://api.mojang.com/users/profiles/minecraft/${username}`, {
 			baseURL: null
 		});
 
-		if (status !== 200 || data.status !== 'OK')
+		if (status !== 200)
 			throw 'Invalid username provided.';
 
 		return data.id;
@@ -481,18 +483,19 @@ class HypixelAPI {
 	 * @returns {Promise<{ uuid: string, username: string }>} A username and UUID.
 	 * @throws {string} UUID or username must be valid.
 	 */
-	 async getUsernameAndUUID(query) {
-		if (typeof query !== 'string' || UUID_REGEX.test(query) === false && USERNAME_REGEX.test(query) === false)
+	async getUsernameAndUUID(query) {
+		const isUsername = typeof query !== 'string' ? null
+			: UUID_REGEX.test(query) ? false
+			: USERNAME_REGEX.test(query) ? true
+			: null;
+
+		if (isUsername === null)
 			throw 'Invalid username or UUID provided.';
 
-		const { data, status } = await this.manager.axios.get(`https://api.minetools.eu/uuid/${query}`, {
-			baseURL: null
-		});
-		
-		if (status !== 200 || data.status !== 'OK')
-			throw 'Invalid username or UUID provided.';
-
-		return { uuid: data.id, username: data.name };
+		return {
+			[isUsername ? 'uuid' : 'username']: await this[isUsername ? 'getUUID' : 'getUsername'](query),
+			[isUsername ? 'username' : 'uuid']: query
+		};
 	}
 
 	/**
@@ -579,16 +582,16 @@ class HypixelAPI {
 
 	get resources() {
 		return {
-			achievements: this.resources_achievements.bind(this),
-			challenges: this.resources_challenges.bind(this),
-			quests: this.resources_quests.bind(this),
+			achievements: () => this.resources_achievements(),
+			challenges: () => this.resources_challenges(),
+			quests: () => this.resources_quests(),
 			guild: {
-				achievements: this.resources_guilds_achievements.bind(this),
-				permissions: this.resources_guilds_permissions.bind(this)
+				achievements: () => this.resources_guilds_achievements(),
+				permissions: () => this.resources_guilds_permissions()
 			},
 			skyblock: {
-				collections: this.resources_skyblock_collections.bind(this),
-				skills: this.resources_skyblock_skills.bind(this)
+				collections: () => this.resources_skyblock_collections(),
+				skills: () => this.resources_skyblock_skills()
 			}
 		};
 	}
@@ -596,7 +599,6 @@ class HypixelAPI {
 	/**
 	 * Retrieve a list of all possible achievements.
 	 * @returns {Promise<Object.<string, Achievement>>} A list of all possible achievements.
-	 * @private
 	 */
 	async resources_achievements() {
 		const { data } = await this.manager.request('/resources/achievements', { key: null });
@@ -607,7 +609,6 @@ class HypixelAPI {
 	/**
 	 * Retrieve a list of all possible challenges.
 	 * @returns {Promise<Object.<string, Challenge[]>>} A list of all possible challenges.
-	 * @private
 	 */
 	async resources_challenges() {
 		const { data } = await this.manager.request('/resources/challenges', { key: null });
@@ -618,7 +619,6 @@ class HypixelAPI {
 	/**
 	 * Retrieve a list of all possible quests.
 	 * @returns {Promise<Object.<string, Quest[]>>} A list of all possible quests.
-	 * @private
 	 */
 	async resources_quests() {
 		const { data } = await this.manager.request('/resources/quests', { key: null });
@@ -629,7 +629,6 @@ class HypixelAPI {
 	/**
 	 * Retrieve a list of all possible guild achievements.
 	 * @returns {Promise<{ one_time: OneTimeAchievement[], tiered: TieredAchievement[] }>} A list of all possible guild achievements.
-	 * @private
 	 */
 	async resources_guilds_achievements() {
 		const { data } = await this.manager.request('/resources/guilds/achievements', { key: null });
@@ -643,7 +642,6 @@ class HypixelAPI {
 	/**
 	 * Retrieve a list of all possible guild permissions.
 	 * @returns {Promise<Array.<{ en_us: GuildPermission }>>} A list of all possible guild permissions.
-	 * @private
 	 */
 	 async resources_guilds_permissions() {
 		const { data } = await this.manager.request('/resources/guilds/permissions', { key: null });
@@ -654,7 +652,6 @@ class HypixelAPI {
 	/**
 	 * Retrieves a list of all Skyblock collections.
 	 * @returns {Promise<Object.<string, { name: string, items: Object.<string, SkyblockCollection> }>>} A list of all Skyblock collections.
-	 * @private
 	 */
 	async resources_skyblock_collections() {
 		const { data } = await this.manager.request('/resources/skyblock/collections', { key: null });
@@ -665,7 +662,6 @@ class HypixelAPI {
 	/**
 	 * Retrieves a list of all Skyblock skills.
 	 * @returns {Promise<Object.<string, SkyblockSkill>>} A list of all Skyblock skills.
-	 * @private
 	 */
 	async resources_skyblock_skills() {
 		const { data } = await this.manager.request('/resources/skyblock/skills', { key: null });
@@ -676,20 +672,19 @@ class HypixelAPI {
 
 	get skyblock() {
 		return {
-			news: this.skyblock_news.bind(this),
-			auction: this.skyblock_auction.bind(this),
-			auctions: this.skyblock_auctions.bind(this),
-			endedAuctions: this.skyblock_auctions_ended.bind(this),
-			bazaar: this.skyblock_bazaar.bind(this),
-			profile: this.skyblock_profile.bind(this),
-			profiles: this.skyblock_profiles.bind(this)
+			news: () => this.skyblock_news(),
+			auction: () => this.skyblock_auction(),
+			auctions: () => this.skyblock_auctions(),
+			endedAuctions: () => this.skyblock_auctions_ended(),
+			bazaar: () => this.skyblock_bazaar(),
+			profile: () => this.skyblock_profile(),
+			profiles: () => this.skyblock_profiles()
 		};
 	}
 
 	/**
 	 * Retrieves a list of Skyblock news.
 	 * @returns {Promise<SkyblockNews[]>} A list of Skyblock news.
-	 * @private
 	 */
 	async skyblock_news() {
 		const { data } = await this.manager.request('/skyblock/news');
@@ -703,7 +698,6 @@ class HypixelAPI {
 	 * @param {'uuid' | 'player' | 'profile'} type The type of UUID to query. 
 	 * @returns {Promise<Auction[]>} A list of auctions.
 	 * @throws {string} Invalid type or UUID.
-	 * @private
 	 */
 	async skyblock_auction(uuid, type = 'player') {
 		if (['uuid', 'player', 'profile'].includes(type) === false)
@@ -721,7 +715,6 @@ class HypixelAPI {
 	 * Retrieves a list of auctions and global auction statistics.
 	 * @param {number} page The auction page number.
 	 * @returns {Promise<{ page: number, totalPages: number, totalAuctions: number, lastUpdated: number, auctions: Auction[] }>} A list of auctions and global auction statistics.
-	 * @private
 	 */
 	async skyblock_auctions(page = 0) {
 		const { data } = await this.manager.request('/skyblock/auctions', { page });
@@ -738,7 +731,6 @@ class HypixelAPI {
 	/**
 	 * Retrieves a list of auctions that have ended.
 	 * @returns {Promise<{ lastUpdated: number, auctions: EndedAuction[] }>} A list of auctions that have ended.
-	 * @private
 	 */
 	async skyblock_auctions_ended() {
 		const { data } = await this.manager.request('/skyblock/auctions_ended');
@@ -752,7 +744,6 @@ class HypixelAPI {
 	/**
 	 * Retrieves a list of all items listed on the bazaar.
 	 * @returns {Promise<Object.<string, SkyblockBazaar>>} A list of all items listed on the bazaar.
-	 * @private
 	 */
 	async skyblock_bazaar() {
 		const { data } = await this.manager.request('/skyblock/bazaar');
@@ -764,7 +755,6 @@ class HypixelAPI {
 	 * Retrieves a Skyblock profile.
 	 * @param {string} query A profile UUId.
 	 * @returns {Promise<SkyblockProfile>} A Skyblock profile.
-	 * @private
 	 */
 	async skyblock_profile(profile) {
 		const { data } = await this.manager.request('/skyblock/profile', { profile });
@@ -776,7 +766,6 @@ class HypixelAPI {
 	 * Retrieves a list of profiles attached to a user.
 	 * @param {string} query A UUID or username.
 	 * @returns {Promise<SkyblockProfile[]>} A list of profiles attached to the player.
-	 * @private
 	 */
 	async skyblock_profiles(query) {
 		const { uuid } = await this.getUsernameAndUUID(query);

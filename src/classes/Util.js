@@ -1,3 +1,5 @@
+/** @module hypixel-api-v2 */
+
 const nbt = require('prismarine-nbt');
 
 /**
@@ -8,6 +10,9 @@ const nbt = require('prismarine-nbt');
  */
 
 class Util {
+	/**
+	 * 
+	 */
 	constructor() {
 		throw 'This class cannot be instantiated.';
 	}

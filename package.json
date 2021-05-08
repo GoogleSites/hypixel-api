@@ -1,14 +1,15 @@
 {
   "name": "hypixel-api-v2",
-  "version": "1.2.2",
+  "version": "1.2.23",
   "description": "",
-  "main": "./index.js",
+  "main": "./src/index.js",
   "scripts": {
     "test": "jest --verbose ./test",
     "test:coverage": "npm test -- --coverage",
-    "test:badges": "npm run test:coverage && jest-coverage-badges"
+    "test:badges": "npm run test:coverage && jest-coverage-badges",
+    "typings": "npx jsdoc -t node_modules/tsd-jsdoc/dist -r src -d ./typings"
   },
-  "types": "./typings/index.d.ts",
+  "types": "./typings/types.d.ts",
   "author": "GoogleSites",
   "license": "ISC",
   "dependencies": {
@@ -20,7 +21,9 @@
     "@types/node": "^14.14.37",
     "better-docs": "^2.3.2",
     "jest": "^26.6.3",
-    "jest-coverage-badges": "^1.1.2"
+    "jest-coverage-badges": "^1.1.2",
+    "jsdoc": "^3.6.6",
+    "tsd-jsdoc": "^2.5.0"
   },
   "repository": {
     "type": "git",
@@ -36,12 +39,12 @@
   "exports": {
     ".": [
       {
-        "require": "./index.js",
-        "import": "./index.mjs"
+        "require": "./src/index.js",
+        "import": "./src/index.mjs"
       },
-      "./index.js"
+      "./src/index.js"
     ],
-    "./esm": "./index.mjs"
+    "./esm": "./src/index.mjs"
   },
   "engines": {
     "node": ">=14.0.0"
