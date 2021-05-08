@@ -91,6 +91,24 @@ class Util {
 			: experience <= 569809640 ? 49
 			: 50;
 	}
+
+	/**
+	 * Converts network experience into a network level.
+	 * @param {number} experience The amount of network experience.
+	 * @returns {number} The network level.
+	 */
+	static networkLevel(experience) {
+		return (Math.sqrt(experience + 15312.5) - 125 / Math.sqrt(2)) / (25 * Math.sqrt(2));
+	}
+
+	/**
+	 * Converts network level into network experience.
+	 * @param {number} experience The network level.
+	 * @returns {number} The network experience required for that level.
+	 */
+	static networkExperience(level) {
+		return Math.pow(level * 25 * Math.sqrt(2) + 125 / Math.sqrt(2), 2) - 15312.5;
+	}
 }
 
 module.exports = Util;
