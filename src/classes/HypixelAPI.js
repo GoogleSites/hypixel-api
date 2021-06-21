@@ -203,7 +203,7 @@
  * @property {string} category The category of the auction.
  * @property {string} tier The tier of the item.
  * @property {number} starting_bid The starting bidding price.
- * @property {HypixelBinaryData} item_bytes The item data.
+ * @property {string} item_bytes The item data.
  * @property {boolean} claimed Whether the auction has been claimed.
  * @property {string[]} claimed_bidders A UUID list of all bidders.
  * @property {number} highest_bid_amount The highest bid.
