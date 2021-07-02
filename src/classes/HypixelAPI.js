@@ -492,9 +492,16 @@ class HypixelAPI {
 		if (isUsername === null)
 			throw 'Invalid username or UUID provided.';
 
+		const { data } = await this.manager.axios.get(isUsername
+			? `https://api.mojang.com/users/profiles/minecraft/${query}`
+			: `https://sessionserver.mojang.com/session/minecraft/profile/${query}`,
+		{
+			baseURL: null
+		});
+
 		return {
-			[isUsername ? 'uuid' : 'username']: await this[isUsername ? 'getUUID' : 'getUsername'](query),
-			[isUsername ? 'username' : 'uuid']: query
+			username: data.name,
+			uuid: data.id
 		};
 	}
 
