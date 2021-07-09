@@ -22,7 +22,12 @@ declare module "hypixel-api-v2" {
         lastLogin: number;
         lastLogout: number;
         networkExp: number;
+        achievementPoints: number;
         stats: any;
+        prefix?: string;
+        monthlyPackageRank?: string;
+        monthlyRankColor?: string;
+        rankPlusColor?: string;
     };
     /**
      * @property _id - The internal MongoDB document identification number.
