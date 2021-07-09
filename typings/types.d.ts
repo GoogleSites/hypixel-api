@@ -24,6 +24,7 @@ declare module "hypixel-api-v2" {
         networkExp: number;
         achievementPoints: number;
         stats: any;
+        achievements: { [key: string]: number };
         prefix?: string;
         monthlyPackageRank?: string;
         monthlyRankColor?: string;
