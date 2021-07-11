@@ -567,6 +567,7 @@ class HypixelAPI {
 	/**
 	 * Retrieve information about a guild.
 	 * @param {string} query The guild id, guild name, or the uuid of a guild member.
+	 * @param {?string} type The type of query (name, player, id)
 	 * @returns {Promise<Guild>} The guild.
 	 * @throws {string} Guild UUID, member UUID, or name must be valid.
 	 */

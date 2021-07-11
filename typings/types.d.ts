@@ -1,3 +1,4 @@
+import type { AxiosInstance } from 'axios';
 import type nbt from 'prismarine-nbt';
 
 declare module "hypixel-api-v2" {
@@ -643,6 +644,7 @@ declare module "hypixel-api-v2" {
      * @param cacheFor - The number of milliseconds to cache results.
      */
     class HypixelAPI {
+        public manager: RequestManager;
         constructor(keys: string[] | string, cacheFor?: number);
         /**
          * Retrieve a username from a UUID.
@@ -697,7 +699,7 @@ declare module "hypixel-api-v2" {
          * @param query - The guild id, guild name, or the uuid of a guild member.
          * @returns The guild.
          */
-        guild(query: string): Promise<Guild>;
+        guild(query: string, type?: 'name' | 'player' | 'id'): Promise<Guild>;
         /**
          * Retrieve a list of all possible achievements.
          * @returns A list of all possible achievements.
@@ -817,6 +819,7 @@ declare module "hypixel-api-v2" {
      * @param cacheFor - The number of milliseconds to cache results.
      */
     class RequestManager {
+        public axios: AxiosInstance;
         constructor(keys: string[] | string, cacheFor?: number);
         /**
          * Send a request to the Hypixel API.
