@@ -575,7 +575,7 @@ declare module "hypixel-api-v2" {
             [key: string]: SkyblockMember;
         };
         cute_name: string;
-        transactions: any;
+        banking: { balance: number, transactions: SkyblockBankTransaction[] };
         community_upgrades: SkyblockCommunityUpgrade[];
         game_mode: string;
     };
