@@ -576,7 +576,10 @@ declare module "hypixel-api-v2" {
         };
         cute_name: string;
         banking: { balance: number, transactions: SkyblockBankTransaction[] };
-        community_upgrades: SkyblockCommunityUpgrade[];
+        community_upgrades: {
+            currently_upgrading: any | null;
+            upgrade_states: SkyblockCommunityUpgrade[]
+        };
         game_mode: string;
     };
     /**

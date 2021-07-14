@@ -377,7 +377,7 @@
  * @property {Object.<string, SkyblockMember>} members A list of island members.
  * @property {string} cute_name The name of the Skyblock realm.
  * @property {{ balance: number, transactions: SkyblockBankTransaction[] }} banking A list of bank transactions.
- * @property {SkyblockCommunityUpgrade[]} community_upgrades A list of community upgrades.
+ * @property {{ upgrade_states: SkyblockCommunityUpgrade[] currently_upgrading: any | null }} community_upgrades A list of community upgrades.
  * @property {string} game_mode The game mode.
  */
 
