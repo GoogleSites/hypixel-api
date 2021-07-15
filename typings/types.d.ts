@@ -581,6 +581,7 @@ declare module "hypixel-api-v2" {
             upgrade_states: SkyblockCommunityUpgrade[]
         };
         game_mode: string;
+        dungeons: any;
     };
     /**
      * @property _id - The MongoDB internal identiciaton key of the document.
