@@ -30,6 +30,11 @@ declare module "hypixel-api-v2" {
         monthlyPackageRank?: string;
         monthlyRankColor?: string;
         rankPlusColor?: string;
+        socialMedia?: {
+            links?: {
+                DISCORD?: string;
+            };
+        };
     };
     /**
      * @property _id - The internal MongoDB document identification number.
