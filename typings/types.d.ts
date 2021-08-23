@@ -782,9 +782,7 @@ declare module "hypixel-api-v2" {
          * Retrieves a list of all items listed on the bazaar.
          * @returns A list of all items listed on the bazaar.
          */
-        skyblock_bazaar(): Promise<{
-            [key: string]: SkyblockBazaar;
-        }>;
+        skyblock_bazaar(): Promise<SkyblockBazaar>;
         /**
          * Retrieves a Skyblock profile.
          * @param query - A profile UUId.
